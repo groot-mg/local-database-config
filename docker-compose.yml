@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: pg-database
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: local_user
+      POSTGRES_PASSWORD: local_pass
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/backup:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U local_user -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:6.21
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: local@local.com
+      PGADMIN_DEFAULT_PASSWORD: local
+    ports:
+      - "5050:80"
+    links:
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+
+  # Enable metrics for Prometheus
+  postgres-exporter:
+    container_name: postgres-exporter
+    image: prometheuscommunity/postgres-exporter:v0.10.1
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://root:root@database:5432/sales-catalog?sslmode=disable"
+    links:
+      - database
+    depends_on:
+      database:
+        condition: service_healthy
