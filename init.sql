@@ -10,9 +10,9 @@ GRANT ALL PRIVILEGES ON SCHEMA groot_mg TO sales_catalog_user;
 CREATE TABLE IF NOT EXISTS groot_mg.products
 (
     product_id uuid NOT NULL,
-    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    description character varying(255) COLLATE pg_catalog."default",
-    price numeric(38,2) NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    description character varying(256) COLLATE pg_catalog."default",
+    price numeric(10,2) NOT NULL,
     quantity bigint NOT NULL,
     is_reserved boolean NOT NULL,
     is_sold boolean NOT NULL,
