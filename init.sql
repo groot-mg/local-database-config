@@ -1,13 +1,13 @@
-CREATE SCHEMA groot_mg;
+CREATE SCHEMA sales_catalog;
 CREATE USER sales_catalog_user WITH ENCRYPTED PASSWORD 'sales_catalog_pass';
--- GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA groot_mg TO sales_catalog_user;
-GRANT ALL PRIVILEGES ON SCHEMA groot_mg TO sales_catalog_user;
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA sales_catalog TO sales_catalog_user;
+GRANT ALL PRIVILEGES ON SCHEMA sales_catalog TO sales_catalog_user;
 
--- Table: groot_mg.products
+-- Table: sales_catalog.products
 
--- DROP TABLE IF EXISTS groot_mg.products;
+-- DROP TABLE IF EXISTS sales_catalog.products;
 
-CREATE TABLE IF NOT EXISTS groot_mg.products
+CREATE TABLE IF NOT EXISTS sales_catalog.products
 (
     product_id uuid NOT NULL,
     name character varying(100) COLLATE pg_catalog."default" NOT NULL,
@@ -25,5 +25,8 @@ CREATE TABLE IF NOT EXISTS groot_mg.products
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS groot_mg.products
+ALTER TABLE IF EXISTS sales_catalog.products
     OWNER to sales_catalog_user;
+
+-- Include new column
+ALTER TABLE sales_catalog.products ADD COLUMN deleted_at timestamp(6) without time zone NULL;
